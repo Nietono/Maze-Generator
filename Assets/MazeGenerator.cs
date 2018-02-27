@@ -8,6 +8,7 @@ public class MazeGenerator : MonoBehaviour {
     public int mazeX = 0;
     public int mazeY = 0;
     public int genSpeed = 0;
+    public bool combineMeshes = true;
 
     public static Transform unvisited;
     public static Transform visited;
@@ -21,6 +22,7 @@ public class MazeGenerator : MonoBehaviour {
 
     private bool pathComplete = false;
     private bool wallsFused = false;
+    private bool wallMeshesCombined = false;
 
     private void Awake()
     {
@@ -47,6 +49,10 @@ public class MazeGenerator : MonoBehaviour {
             if (!wallsFused)
             {
                 FuseWalls();
+            }
+            else if (!wallMeshesCombined)
+            {
+                CombineWallMeshes();
             }
         }
         else
@@ -134,6 +140,7 @@ public class MazeGenerator : MonoBehaviour {
         else
         {
             pathComplete = true;
+            Debug.Log("Path completed");
         }
     }
 
@@ -153,6 +160,28 @@ public class MazeGenerator : MonoBehaviour {
         }
 
         wallsFused = true;
+        Debug.Log("Walls fused");
+    }
+
+    private void CombineWallMeshes()
+    {
+        MeshFilter[] meshFilters = visited.GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; i++)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            //meshFilters[i].gameObject.SetActive(false);
+            Destroy(meshFilters[i].gameObject);
+        }
+
+        transform.GetComponent<MeshFilter>().mesh = new Mesh();
+        transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        transform.gameObject.SetActive(true);
+
+        wallMeshesCombined = true;
+        Debug.Log("Meshes combined");
     }
 
     public static string CreatePieceName(int x, int y)
