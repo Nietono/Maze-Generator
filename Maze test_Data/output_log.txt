@@ -1,0 +1,28 @@
+Initialize engine version: 5.6.3p1 (9c92e827232b)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 10.1]
+    Renderer: NVIDIA GeForce 405 (ID=0x10c5)
+    Vendor:   NVIDIA
+    VRAM:     986 MB
+    Driver:   8.17.12.6845
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+- Completed reload, in  0.024 seconds
+Platform assembly: C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Yuuichi\Documents\Maze\Maze test_Data\Managed\System.dll (this message is harmless)
+desktop: 1280x1024 60Hz; virtual: 1280x1024 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 2.067857 ms
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 225c -> priority: 1 
+  Thread -> id: 19f4 -> priority: 1 
