@@ -34,4 +34,4 @@ sysinfo.txt
 *.unitypackage
 
 # ADG Textures (package)
-/Assets/ADG_Textures/
+/Assets/ADG_Textures*
