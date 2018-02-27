@@ -37,12 +37,13 @@ public class MazeGenerator : MonoBehaviour {
         GenerateMazePieces();
         FindAllNeighbours();
         InitialiseCurrentPiece();
+        StartCoroutine(BuildMaze());
 
         Camera.main.transform.position = new Vector3(mazeX * 4.5F, System.Math.Max(mazeX, mazeY) * 9, mazeY * -4.5F);
     }
 
     // Update is called once per frame
-    void Update ()
+    /*void Update ()
     {
         if (pathComplete)
         {
@@ -63,6 +64,30 @@ public class MazeGenerator : MonoBehaviour {
                     VisitNextPiece();
                 }
             }
+        }
+    }*/
+
+    IEnumerator BuildMaze()
+    {
+        while (!pathComplete)
+        {
+            for (int i = 0; i < genSpeed; i++)
+            {
+                {
+                    VisitNextPiece();
+                }
+            }
+
+            yield return null;
+        }
+
+        FuseWalls();
+
+        yield return null;
+
+        if(combineMeshes)
+        {
+            CombineWallMeshes();
         }
     }
 
