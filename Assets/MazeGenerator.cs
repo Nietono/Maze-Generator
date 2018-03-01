@@ -84,6 +84,11 @@ public class MazeGenerator : MonoBehaviour {
         {
             for (int i = 0; i < genSpeed; i++)
             {
+                if (pathComplete)
+                {
+                    break;
+                }
+                else
                 {
                     VisitNextPiece();
                 }
