@@ -13,6 +13,8 @@ public class MazeGenerator : MonoBehaviour {
     public static Transform unvisited;
     public static Transform visited;
 
+    private Transform floor;
+
     public static Transform[][] piecesArray;
 
     private Transform currentPiece;
@@ -28,12 +30,14 @@ public class MazeGenerator : MonoBehaviour {
     {
         unvisited = this.transform.Find("Unvisited");
         visited = this.transform.Find("Visited");
+        floor = visited.Find("Floor");
         piecesBeingLookedAt = new Stack<Transform>();
     }
 
     // Use this for initialization
     void Start ()
     {
+        ResizeAndPositionFloor();
         GenerateMazePieces();
         FindAllNeighbours();
         InitialiseCurrentPiece();
@@ -66,6 +70,13 @@ public class MazeGenerator : MonoBehaviour {
             }
         }
     }*/
+
+    private void ResizeAndPositionFloor()
+    {
+        floor.localScale = new Vector3(mazeX * 9 + 1, 1, mazeY * 9 + 1);
+        floor.localPosition = new Vector3((mazeX - 1) * 4.5F, -3, (mazeY - 1) * -4.5F);
+        FixUVs(floor);
+    }
 
     IEnumerator BuildMaze()
     {
