@@ -213,4 +213,54 @@ public class MazeGenerator : MonoBehaviour {
     {
         return x + ", " + y;
     }
+
+    public static void FixUVs(Transform inputTransform)
+    {
+        Mesh currentMesh = inputTransform.GetComponent<MeshFilter>().mesh;
+        float currentWidth = inputTransform.localScale.x * 0.1f;
+        float currentHeight = inputTransform.localScale.y * 0.1f;
+        float currentDepth = inputTransform.localScale.z * 0.1f;
+        Vector2[] newUVs = new Vector2[24];
+
+        for (int i = 0; i < currentMesh.uv.Length; i++)
+        {
+            //Front
+            newUVs[2] = new Vector2(0, currentHeight);
+            newUVs[3] = new Vector2(currentWidth, currentHeight);
+            newUVs[0] = new Vector2(0, 0);
+            newUVs[1] = new Vector2(currentWidth, 0);
+
+            //Back
+            newUVs[7] = new Vector2(0, 0);
+            newUVs[6] = new Vector2(currentWidth, 0);
+            newUVs[11] = new Vector2(0, currentHeight);
+            newUVs[10] = new Vector2(currentWidth, currentHeight);
+
+            //Left
+            newUVs[19] = new Vector2(currentDepth, 0);
+            newUVs[17] = new Vector2(0, currentHeight);
+            newUVs[16] = new Vector2(0, 0);
+            newUVs[18] = new Vector2(currentDepth, currentHeight);
+
+            //Right
+            newUVs[23] = new Vector2(currentDepth, 0);
+            newUVs[21] = new Vector2(0, currentHeight);
+            newUVs[20] = new Vector2(0, 0);
+            newUVs[22] = new Vector2(currentDepth, currentHeight);
+
+            //Top
+            newUVs[4] = new Vector2(currentWidth, 0);
+            newUVs[5] = new Vector2(0, 0);
+            newUVs[8] = new Vector2(currentWidth, currentDepth);
+            newUVs[9] = new Vector2(0, currentDepth);
+
+            //Bottom
+            newUVs[13] = new Vector2(currentWidth, 0);
+            newUVs[14] = new Vector2(0, 0);
+            newUVs[12] = new Vector2(currentWidth, currentDepth);
+            newUVs[15] = new Vector2(0, currentDepth);
+
+            currentMesh.uv = newUVs;
+        }
+    }
 }
