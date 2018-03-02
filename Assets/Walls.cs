@@ -23,6 +23,8 @@ public class Walls : MonoBehaviour {
     public Transform neighbourE;
     public Transform neighbourS;
     public Transform neighbourW;
+
+    private enum WallDirections{North, South, East, West, None};
     #endregion
 
     public MazeGenerator generator;
@@ -124,71 +126,45 @@ public class Walls : MonoBehaviour {
     #endregion
 
     #region Combining
-    public void FuseNorthWallsEastward()
+    public void FuseAllWallsInLine()
     {
-        if (wallN)
-        {
-            Walls currentWallsPiece = null;
+        FuseWallsInLine(wallN);
+        FuseWallsInLine(wallE);
+        FuseWallsInLine(wallS);
+        FuseWallsInLine(wallW);
+    }
 
+    public void FuseWallsInLine(GameObject inputWall)
+    {
+        WallDirections wallDirection = WallObjectToDirection(inputWall);
+
+        if (wallDirection != WallDirections.None)
+        {
+            Transform neighbourTransform;
+            Walls currentWallsPiece = null;
+            GameObject targetWall = null;
+            bool isNorthOrSouth;
             int wallLength = 1;
 
-            if (neighbourE)
+            isNorthOrSouth = (wallDirection == WallDirections.North || wallDirection == WallDirections.South);
+            neighbourTransform = isNorthOrSouth ? neighbourE : neighbourS;
+
+            if (neighbourTransform)
             {
-                currentWallsPiece = neighbourE.GetComponent<Walls>();
+                currentWallsPiece = neighbourTransform.GetComponent<Walls>();
+                targetWall = WallFromDirection(currentWallsPiece, wallDirection);
             }
 
-            while (currentWallsPiece && currentWallsPiece.wallN)
+            while (currentWallsPiece && targetWall)
             {
                 wallLength++;
-                Destroy(currentWallsPiece.wallN);
+                Destroy(targetWall);
 
-                if (currentWallsPiece.neighbourE)
+                if (isNorthOrSouth && currentWallsPiece.neighbourE)
                 {
                     currentWallsPiece = currentWallsPiece.neighbourE.GetComponent<Walls>();
                 }
-                else
-                {
-                    currentWallsPiece = null;
-                }
-            }
-
-            if (wallLength > 1)
-            {
-                Vector3 oldScale = wallN.transform.localScale;
-                Vector3 oldPosition = wallN.transform.localPosition;
-                Vector3 newScale= new Vector3((oldScale.x - 1) * wallLength + 1, oldScale.y, oldScale.z);
-                Vector3 newPosition = new Vector3(
-                    oldPosition.x + generator.halfRemainingPieceWidth * (wallLength - 1),
-                    oldPosition.y,
-                    oldPosition.z);
-                wallN.transform.localScale = newScale;
-                wallN.transform.localPosition = newPosition;
-                MazeGenerator.FixUVs(wallN.transform);
-            }
-
-            wallN.transform.parent = transform.parent;
-        }
-    }
-
-    public void FuseEastWallsSouthward()
-    {
-        if (wallE)
-        {
-            Walls currentWallsPiece = null;
-
-            int wallLength = 1;
-
-            if (neighbourS)
-            {
-                currentWallsPiece = neighbourS.GetComponent<Walls>();
-            }
-
-            while (currentWallsPiece && currentWallsPiece.wallE)
-            {
-                wallLength++;
-                Destroy(currentWallsPiece.wallE);
-
-                if (currentWallsPiece.neighbourS)
+                else if (!isNorthOrSouth && currentWallsPiece.neighbourS)
                 {
                     currentWallsPiece = currentWallsPiece.neighbourS.GetComponent<Walls>();
                 }
@@ -196,116 +172,94 @@ public class Walls : MonoBehaviour {
                 {
                     currentWallsPiece = null;
                 }
+
+                targetWall = WallFromDirection(currentWallsPiece, wallDirection);
             }
 
             if (wallLength > 1)
             {
-                Vector3 oldScale = wallE.transform.localScale;
-                Vector3 oldPosition = wallE.transform.localPosition;
-                Vector3 newScale = new Vector3(oldScale.x, oldScale.y, (oldScale.z - 1) * wallLength + 1);
-                Vector3 newPosition = new Vector3(
-                    oldPosition.x,
-                    oldPosition.y,
-                    oldPosition.z - generator.halfRemainingPieceWidth * (wallLength - 1));
-                wallE.transform.localScale = newScale;
-                wallE.transform.localPosition = newPosition;
-                MazeGenerator.FixUVs(wallE.transform);
+                FixFusedWall(inputWall, wallLength, isNorthOrSouth);
             }
 
-            wallE.transform.parent = transform.parent;
+            inputWall.transform.parent = transform.parent;
         }
     }
 
-    public void FuseSouthWallsEastward()
+    private WallDirections WallObjectToDirection(GameObject inputWall)
     {
-        if (wallS)
+        if (!inputWall)
         {
-            Walls currentWallsPiece = null;
+            return WallDirections.None;
+        }
 
-            int wallLength = 1;
+        if (inputWall == wallN)
+        {
+            return WallDirections.North;
+        }
+        else if (inputWall == wallE)
+        {
+            return WallDirections.East;
+        }
+        else if (inputWall == wallS)
+        {
+            return WallDirections.South;
+        }
+        else if (inputWall == wallW)
+        {
+            return WallDirections.West;
+        }
 
-            if (neighbourE)
-            {
-                currentWallsPiece = neighbourE.GetComponent<Walls>();
-            }
+        return WallDirections.None;
+    }
 
-            while (currentWallsPiece && currentWallsPiece.wallS)
-            {
-                wallLength++;
-                Destroy(currentWallsPiece.wallS);
+    private GameObject WallFromDirection(Walls wallScript, WallDirections wallDirection)
+    {
+        if (!wallScript)
+        {
+            return null;
+        }
 
-                if (currentWallsPiece.neighbourE)
-                {
-                    currentWallsPiece = currentWallsPiece.neighbourE.GetComponent<Walls>();
-                }
-                else
-                {
-                    currentWallsPiece = null;
-                }
-            }
-
-            if (wallLength > 1)
-            {
-                Vector3 oldScale = wallS.transform.localScale;
-                Vector3 oldPosition = wallS.transform.localPosition;
-                Vector3 newScale = new Vector3((oldScale.x - 1) * wallLength + 1, oldScale.y, oldScale.z);
-                Vector3 newPosition = new Vector3(
-                    oldPosition.x + generator.halfRemainingPieceWidth * (wallLength - 1),
-                    oldPosition.y,
-                    oldPosition.z);
-                wallS.transform.localScale = newScale;
-                wallS.transform.localPosition = newPosition;
-                MazeGenerator.FixUVs(wallS.transform);
-            }
-
-            wallS.transform.parent = transform.parent;
+        switch (wallDirection)
+        {
+            case WallDirections.North:
+                return wallScript.wallN;
+            case WallDirections.East:
+                return wallScript.wallE;
+            case WallDirections.South:
+                return wallScript.wallS;
+            case WallDirections.West:
+                return wallScript.wallW;
+            default:
+                return null;
         }
     }
 
-    public void FuseWestWallsSouthward()
+    private void FixFusedWall(GameObject fusedWall, int wallLength, bool isNorthOrSouth)
     {
-        if (wallW)
+        Vector3 oldScale = fusedWall.transform.localScale;
+        Vector3 oldPosition = fusedWall.transform.localPosition;
+        Vector3 newScale, newPosition;
+
+        if (isNorthOrSouth)
         {
-            Walls currentWallsPiece = null;
-
-            int wallLength = 1;
-
-            if (neighbourS)
-            {
-                currentWallsPiece = neighbourS.GetComponent<Walls>();
-            }
-
-            while (currentWallsPiece && currentWallsPiece.wallW)
-            {
-                wallLength++;
-                Destroy(currentWallsPiece.wallW);
-
-                if (currentWallsPiece.neighbourS)
-                {
-                    currentWallsPiece = currentWallsPiece.neighbourS.GetComponent<Walls>();
-                }
-                else
-                {
-                    currentWallsPiece = null;
-                }
-            }
-
-            if (wallLength > 1)
-            {
-                Vector3 oldScale = wallW.transform.localScale;
-                Vector3 oldPosition = wallW.transform.localPosition;
-                Vector3 newScale = new Vector3(oldScale.x, oldScale.y, (oldScale.z - 1) * wallLength + 1);
-                Vector3 newPosition = new Vector3(
-                    oldPosition.x,
-                    oldPosition.y,
-                    oldPosition.z - generator.halfRemainingPieceWidth * (wallLength - 1));
-                wallW.transform.localScale = newScale;
-                wallW.transform.localPosition = newPosition;
-                MazeGenerator.FixUVs(wallW.transform);
-            }
-
-            wallW.transform.parent = transform.parent;
+            newScale = new Vector3((oldScale.x - 1) * wallLength + 1, oldScale.y, oldScale.z);
+            newPosition = new Vector3(
+                oldPosition.x + generator.halfRemainingPieceWidth * (wallLength - 1),
+                oldPosition.y,
+                oldPosition.z);
         }
+        else
+        {
+            newScale = new Vector3(oldScale.x, oldScale.y, (oldScale.z - 1) * wallLength + 1);
+            newPosition = new Vector3(
+                oldPosition.x,
+                oldPosition.y,
+                oldPosition.z - generator.halfRemainingPieceWidth * (wallLength - 1));
+        }
+
+        fusedWall.transform.localScale = newScale;
+        fusedWall.transform.localPosition = newPosition;
+        MazeGenerator.FixUVs(fusedWall.transform);
     }
     #endregion
 }

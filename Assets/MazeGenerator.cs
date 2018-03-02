@@ -252,10 +252,7 @@ public class MazeGenerator : MonoBehaviour {
             for (int j = 0; j < mazeY; j++)
             {
                 Walls currentWallPiece = piecesArray[i][j].GetComponent<Walls>();
-                currentWallPiece.FuseNorthWallsEastward();
-                currentWallPiece.FuseEastWallsSouthward();
-                currentWallPiece.FuseSouthWallsEastward();
-                currentWallPiece.FuseWestWallsSouthward();
+                currentWallPiece.FuseAllWallsInLine();
                 Destroy(currentWallPiece.gameObject);
             }
         }
