@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour {
 
+    #region Inspector settings
     public GameObject mazePiecePrefab;
     public int mazeX = 0;
     public int mazeY = 0;
     public int genSpeed = 0;
     public bool combineMeshes = true;
+    #endregion
 
+    #region Piece sizes
     private float _pieceWidth;
     private float _wallWidth;
     public float remainingPieceWidth = 0;
@@ -36,18 +39,25 @@ public class MazeGenerator : MonoBehaviour {
             halfRemainingPieceWidth = remainingPieceWidth * 0.5F;
         }
     }
+    #endregion
 
+    #region Transform references
     public Transform unvisited;
     public Transform visited;
     private Transform floor;
+    #endregion
 
+    #region Piece references
     public Transform[][] piecesArray;
     private Transform currentPiece;
     private Stack<Transform> piecesBeingLookedAt;
+    #endregion
 
+    #region Completion flags
     private bool pathComplete = false;
     private bool wallsFused = false;
     private bool wallMeshesCombined = false;
+    #endregion
 
     private void Awake()
     {
@@ -70,6 +80,7 @@ public class MazeGenerator : MonoBehaviour {
         StartCoroutine(BuildMaze());
     }
 
+    #region Commented out Update()
     // Update is called once per frame
     /*void Update ()
     {
@@ -94,7 +105,9 @@ public class MazeGenerator : MonoBehaviour {
             }
         }
     }*/
+    #endregion
 
+    #region Setup and piece creation
     private void InitialiseCameraPosition()
     {
         Camera.main.transform.position = new Vector3(
@@ -159,7 +172,9 @@ public class MazeGenerator : MonoBehaviour {
             walls.FindNeighbours();
         }
     }
+    #endregion
 
+    #region Maze path building and combining
     private void InitialiseCurrentPiece()
     {
         if (piecesArray.Length > 0 && piecesArray[0].Length > 0)
@@ -229,6 +244,7 @@ public class MazeGenerator : MonoBehaviour {
         }
     }
 
+    #region Combining
     private void FuseWalls()
     {
         for (int i = 0; i < mazeX; i++)
@@ -268,7 +284,10 @@ public class MazeGenerator : MonoBehaviour {
         wallMeshesCombined = true;
         Debug.Log("Meshes combined");
     }
+    #endregion
+    #endregion
 
+    #region Helper functions
     public static string CreatePieceName(int x, int y)
     {
         return x + ", " + y;
@@ -323,4 +342,5 @@ public class MazeGenerator : MonoBehaviour {
             currentMesh.uv = newUVs;
         }
     }
+    #endregion
 }

@@ -4,22 +4,30 @@ using UnityEngine;
 
 public class Walls : MonoBehaviour {
 
+    #region Wall objects
     public GameObject wallN;
     public GameObject wallE;
     public GameObject wallS;
     public GameObject wallW;
+    #endregion
 
+    #region Piece position
     private int myX = 0;
     private int myY = 0;
     private int maxX = 0;
     private int maxY = 0;
+    #endregion
 
+    #region Neighbouring pieces
     public Transform neighbourN;
     public Transform neighbourE;
     public Transform neighbourS;
     public Transform neighbourW;
+    #endregion
 
     public MazeGenerator generator;
+
+    #region Setup
     public void Initialise(int x, int y, int newMaxX, int newMaxY)
     {
         myX = x;
@@ -60,7 +68,9 @@ public class Walls : MonoBehaviour {
             neighbourW = generator.piecesArray[myX - 1][myY];
         }
     }
+    #endregion
 
+    #region Path building
     public Transform[] GetUnvisitedNeighbours()
     {
         List<Transform> unvisitedList = new List<Transform>();
@@ -111,7 +121,9 @@ public class Walls : MonoBehaviour {
             Destroy(neighbour.GetComponent<Walls>().wallE);
         }
     }
+    #endregion
 
+    #region Combining
     public void FuseNorthWallsEastward()
     {
         if (wallN)
@@ -295,4 +307,5 @@ public class Walls : MonoBehaviour {
             wallW.transform.parent = transform.parent;
         }
     }
+    #endregion
 }
