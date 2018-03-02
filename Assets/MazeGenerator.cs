@@ -45,8 +45,6 @@ public class MazeGenerator : MonoBehaviour {
     private Transform currentPiece;
     private Stack<Transform> piecesBeingLookedAt;
 
-    float timeStart;
-
     private bool pathComplete = false;
     private bool wallsFused = false;
     private bool wallMeshesCombined = false;
