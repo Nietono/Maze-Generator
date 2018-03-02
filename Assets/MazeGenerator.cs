@@ -162,7 +162,7 @@ public class MazeGenerator : MonoBehaviour {
 
     private void InitialiseCurrentPiece()
     {
-        if (unvisited)
+        if (piecesArray.Length > 0 && piecesArray[0].Length > 0)
         {
             currentPiece = piecesArray[0][0];
 
