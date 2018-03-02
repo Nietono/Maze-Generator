@@ -19,6 +19,7 @@ public class Walls : MonoBehaviour {
     public Transform neighbourS;
     public Transform neighbourW;
 
+    public MazeGenerator generator;
     public void Initialise(int x, int y, int newMaxX, int newMaxY)
     {
         myX = x;
@@ -41,22 +42,22 @@ public class Walls : MonoBehaviour {
     {
         if (myY > 0)
         {
-            neighbourN = MazeGenerator.piecesArray[myX][myY - 1];
+            neighbourN = generator.piecesArray[myX][myY - 1];
         }
 
         if (myX < maxX)
         {
-            neighbourE = MazeGenerator.piecesArray[myX + 1][myY];
+            neighbourE = generator.piecesArray[myX + 1][myY];
         }
 
         if (myY < maxY)
         {
-            neighbourS = MazeGenerator.piecesArray[myX][myY + 1];
+            neighbourS = generator.piecesArray[myX][myY + 1];
         }
 
         if (myX > 0)
         {
-            neighbourW = MazeGenerator.piecesArray[myX - 1][myY];
+            neighbourW = generator.piecesArray[myX - 1][myY];
         }
     }
 
@@ -64,22 +65,22 @@ public class Walls : MonoBehaviour {
     {
         List<Transform> unvisitedList = new List<Transform>();
 
-        if (neighbourN && neighbourN.parent == MazeGenerator.unvisited)
+        if (neighbourN && neighbourN.parent == generator.unvisited)
         {
             unvisitedList.Add(neighbourN);
         }
 
-        if (neighbourE && neighbourE.parent == MazeGenerator.unvisited)
+        if (neighbourE && neighbourE.parent == generator.unvisited)
         {
             unvisitedList.Add(neighbourE);
         }
 
-        if (neighbourS && neighbourS.parent == MazeGenerator.unvisited)
+        if (neighbourS && neighbourS.parent == generator.unvisited)
         {
             unvisitedList.Add(neighbourS);
         }
 
-        if (neighbourW && neighbourW.parent == MazeGenerator.unvisited)
+        if (neighbourW && neighbourW.parent == generator.unvisited)
         {
             unvisitedList.Add(neighbourW);
         }
@@ -144,7 +145,10 @@ public class Walls : MonoBehaviour {
                 Vector3 oldScale = wallN.transform.localScale;
                 Vector3 oldPosition = wallN.transform.localPosition;
                 Vector3 newScale= new Vector3((oldScale.x - 1) * wallLength + 1, oldScale.y, oldScale.z);
-                Vector3 newPosition = new Vector3(oldPosition.x + 4.5F * (wallLength - 1), oldPosition.y, oldPosition.z);
+                Vector3 newPosition = new Vector3(
+                    oldPosition.x + generator.halfRemainingPieceWidth * (wallLength - 1),
+                    oldPosition.y,
+                    oldPosition.z);
                 wallN.transform.localScale = newScale;
                 wallN.transform.localPosition = newPosition;
                 MazeGenerator.FixUVs(wallN.transform);
@@ -187,7 +191,10 @@ public class Walls : MonoBehaviour {
                 Vector3 oldScale = wallE.transform.localScale;
                 Vector3 oldPosition = wallE.transform.localPosition;
                 Vector3 newScale = new Vector3(oldScale.x, oldScale.y, (oldScale.z - 1) * wallLength + 1);
-                Vector3 newPosition = new Vector3(oldPosition.x, oldPosition.y, oldPosition.z - 4.5F * (wallLength - 1));
+                Vector3 newPosition = new Vector3(
+                    oldPosition.x,
+                    oldPosition.y,
+                    oldPosition.z - generator.halfRemainingPieceWidth * (wallLength - 1));
                 wallE.transform.localScale = newScale;
                 wallE.transform.localPosition = newPosition;
                 MazeGenerator.FixUVs(wallE.transform);
@@ -230,7 +237,10 @@ public class Walls : MonoBehaviour {
                 Vector3 oldScale = wallS.transform.localScale;
                 Vector3 oldPosition = wallS.transform.localPosition;
                 Vector3 newScale = new Vector3((oldScale.x - 1) * wallLength + 1, oldScale.y, oldScale.z);
-                Vector3 newPosition = new Vector3(oldPosition.x + 4.5F * (wallLength - 1), oldPosition.y, oldPosition.z);
+                Vector3 newPosition = new Vector3(
+                    oldPosition.x + generator.halfRemainingPieceWidth * (wallLength - 1),
+                    oldPosition.y,
+                    oldPosition.z);
                 wallS.transform.localScale = newScale;
                 wallS.transform.localPosition = newPosition;
                 MazeGenerator.FixUVs(wallS.transform);
@@ -273,7 +283,10 @@ public class Walls : MonoBehaviour {
                 Vector3 oldScale = wallW.transform.localScale;
                 Vector3 oldPosition = wallW.transform.localPosition;
                 Vector3 newScale = new Vector3(oldScale.x, oldScale.y, (oldScale.z - 1) * wallLength + 1);
-                Vector3 newPosition = new Vector3(oldPosition.x, oldPosition.y, oldPosition.z - 4.5F * (wallLength - 1));
+                Vector3 newPosition = new Vector3(
+                    oldPosition.x,
+                    oldPosition.y,
+                    oldPosition.z - generator.halfRemainingPieceWidth * (wallLength - 1));
                 wallW.transform.localScale = newScale;
                 wallW.transform.localPosition = newPosition;
                 MazeGenerator.FixUVs(wallW.transform);

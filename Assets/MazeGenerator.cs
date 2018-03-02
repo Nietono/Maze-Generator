@@ -10,13 +10,38 @@ public class MazeGenerator : MonoBehaviour {
     public int genSpeed = 0;
     public bool combineMeshes = true;
 
-    public static Transform unvisited;
-    public static Transform visited;
+    private float _pieceWidth;
+    private float _wallWidth;
+    public float remainingPieceWidth = 0;
+    public float halfRemainingPieceWidth = 0;
 
+    public float pieceWidth
+    {
+        get { return _pieceWidth; }
+        set
+        {
+            _pieceWidth = value;
+            remainingPieceWidth = value - _wallWidth;
+            halfRemainingPieceWidth = remainingPieceWidth * 0.5F;
+        }
+    }
+
+    public float wallWidth
+    {
+        get { return _wallWidth; }
+        set
+        {
+            _wallWidth = value;
+            remainingPieceWidth = _pieceWidth - value;
+            halfRemainingPieceWidth = remainingPieceWidth * 0.5F;
+        }
+    }
+
+    public Transform unvisited;
+    public Transform visited;
     private Transform floor;
 
-    public static Transform[][] piecesArray;
-
+    public Transform[][] piecesArray;
     private Transform currentPiece;
     private Stack<Transform> piecesBeingLookedAt;
 
@@ -32,18 +57,19 @@ public class MazeGenerator : MonoBehaviour {
         visited = this.transform.Find("Visited");
         floor = visited.Find("Floor");
         piecesBeingLookedAt = new Stack<Transform>();
+        pieceWidth = 10;
+        wallWidth = 1;
     }
 
     // Use this for initialization
     void Start ()
     {
+        InitialiseCameraPosition();
         ResizeAndPositionFloor();
         GenerateMazePieces();
         FindAllNeighbours();
         InitialiseCurrentPiece();
         StartCoroutine(BuildMaze());
-
-        Camera.main.transform.position = new Vector3(mazeX * 4.5F, System.Math.Max(mazeX, mazeY) * 9, mazeY * -4.5F);
     }
 
     // Update is called once per frame
@@ -71,45 +97,31 @@ public class MazeGenerator : MonoBehaviour {
         }
     }*/
 
-    private void ResizeAndPositionFloor()
+    private void InitialiseCameraPosition()
     {
-        floor.localScale = new Vector3(mazeX * 9 + 1, 1, mazeY * 9 + 1);
-        floor.localPosition = new Vector3((mazeX - 1) * 4.5F, -3, (mazeY - 1) * -4.5F);
-        FixUVs(floor);
+        Camera.main.transform.position = new Vector3(
+            mazeX * halfRemainingPieceWidth,
+            System.Math.Max(mazeX, mazeY) * remainingPieceWidth,
+            mazeY * -halfRemainingPieceWidth);
     }
 
-    IEnumerator BuildMaze()
+    private void ResizeAndPositionFloor()
     {
-        while (!pathComplete)
-        {
-            for (int i = 0; i < genSpeed; i++)
-            {
-                if (pathComplete)
-                {
-                    break;
-                }
-                else
-                {
-                    VisitNextPiece();
-                }
-            }
-
-            yield return null;
-        }
-
-        FuseWalls();
-
-        yield return null;
-
-        if(combineMeshes)
-        {
-            CombineWallMeshes();
-        }
+        floor.localScale = new Vector3(
+            mazeX * remainingPieceWidth + 1,
+            1,
+            mazeY * remainingPieceWidth + 1);
+        floor.localPosition = new Vector3(
+            (mazeX - 1) * halfRemainingPieceWidth,
+            -3,
+            (mazeY - 1) * -halfRemainingPieceWidth);
+        FixUVs(floor);
     }
 
     private void GenerateMazePieces()
     {
         piecesArray = new Transform[mazeX][];
+        Walls newPieceScript;
 
         for (int i = 0; i < mazeX; i++)
         {
@@ -122,9 +134,14 @@ public class MazeGenerator : MonoBehaviour {
             {
                 if (mazePiecePrefab)
                 {
-                    GameObject newPiece = Instantiate(mazePiecePrefab, new Vector3(i * 9, 0, j * -9), Quaternion.identity);
+                    GameObject newPiece = Instantiate(
+                        mazePiecePrefab,
+                        new Vector3(i * remainingPieceWidth, 0, j * -remainingPieceWidth),
+                        Quaternion.identity);
                     newPiece.name = CreatePieceName(i, j);
-                    newPiece.GetComponent<Walls>().Initialise(i, j, mazeX - 1, mazeY - 1);
+                    newPieceScript = newPiece.GetComponent<Walls>();
+                    newPieceScript.generator = this;
+                    newPieceScript.Initialise(i, j, mazeX - 1, mazeY - 1);
                     piecesArray[i][j] = newPiece.transform;
 
                     if (unvisited)
@@ -156,6 +173,35 @@ public class MazeGenerator : MonoBehaviour {
                 currentPiece.parent = visited;
             }
 
+        }
+    }
+
+    IEnumerator BuildMaze()
+    {
+        while (!pathComplete)
+        {
+            for (int i = 0; i < genSpeed; i++)
+            {
+                if (pathComplete)
+                {
+                    break;
+                }
+                else
+                {
+                    VisitNextPiece();
+                }
+            }
+
+            yield return null;
+        }
+
+        FuseWalls();
+
+        yield return null;
+
+        if (combineMeshes)
+        {
+            CombineWallMeshes();
         }
     }
 
