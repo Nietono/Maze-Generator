@@ -80,33 +80,6 @@ public class MazeGenerator : MonoBehaviour {
         StartCoroutine(BuildMaze());
     }
 
-    #region Commented out Update()
-    // Update is called once per frame
-    /*void Update ()
-    {
-        if (pathComplete)
-        {
-            if (!wallsFused)
-            {
-                FuseWalls();
-            }
-            else if (!wallMeshesCombined)
-            {
-                CombineWallMeshes();
-            }
-        }
-        else
-        {
-            for (int i = 0; i < genSpeed; i++)
-            {
-                {
-                    VisitNextPiece();
-                }
-            }
-        }
-    }*/
-    #endregion
-
     #region Setup and piece creation
     private void InitialiseCameraPosition()
     {
@@ -270,7 +243,6 @@ public class MazeGenerator : MonoBehaviour {
         {
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            //meshFilters[i].gameObject.SetActive(false);
             Destroy(meshFilters[i].gameObject);
         }
 
