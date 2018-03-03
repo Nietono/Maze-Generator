@@ -261,49 +261,32 @@ public class MazeGenerator : MonoBehaviour {
 
     public static void FixUVs(Transform inputTransform)
     {
+        float extraScalingFactor = 0.1F;
         Mesh currentMesh = inputTransform.GetComponent<MeshFilter>().mesh;
-        float currentWidth = inputTransform.localScale.x * 0.1f;
-        float currentHeight = inputTransform.localScale.y * 0.1f;
-        float currentDepth = inputTransform.localScale.z * 0.1f;
+        float scaledWidth = inputTransform.localScale.x * extraScalingFactor;
+        float scaledHeight = inputTransform.localScale.y * extraScalingFactor;
+        float scaledDepth = inputTransform.localScale.z * extraScalingFactor;
         Vector2[] newUVs = new Vector2[24];
 
         for (int i = 0; i < currentMesh.uv.Length; i++)
         {
-            //Front
-            newUVs[2] = new Vector2(0, currentHeight);
-            newUVs[3] = new Vector2(currentWidth, currentHeight);
-            newUVs[0] = new Vector2(0, 0);
-            newUVs[1] = new Vector2(currentWidth, 0);
+            // Front and back
+            newUVs[0] = newUVs[10] = new Vector2(0, 0);
+            newUVs[1] = newUVs[11] = new Vector2(scaledWidth, 0);
+            newUVs[2] = newUVs[6] = new Vector2(0, scaledHeight);
+            newUVs[3] = newUVs[7] = new Vector2(scaledWidth, scaledHeight);
 
-            //Back
-            newUVs[7] = new Vector2(0, 0);
-            newUVs[6] = new Vector2(currentWidth, 0);
-            newUVs[11] = new Vector2(0, currentHeight);
-            newUVs[10] = new Vector2(currentWidth, currentHeight);
+            // Top and bottom
+            newUVs[4] = newUVs[13] = new Vector2(0, scaledDepth);
+            newUVs[5] = newUVs[14] = new Vector2(scaledWidth, scaledDepth);
+            newUVs[8] = newUVs[12] = new Vector2(0, 0);
+            newUVs[9] = newUVs[15] = new Vector2(scaledWidth, 0);
 
-            //Left
-            newUVs[19] = new Vector2(currentDepth, 0);
-            newUVs[17] = new Vector2(0, currentHeight);
-            newUVs[16] = new Vector2(0, 0);
-            newUVs[18] = new Vector2(currentDepth, currentHeight);
-
-            //Right
-            newUVs[23] = new Vector2(currentDepth, 0);
-            newUVs[21] = new Vector2(0, currentHeight);
-            newUVs[20] = new Vector2(0, 0);
-            newUVs[22] = new Vector2(currentDepth, currentHeight);
-
-            //Top
-            newUVs[4] = new Vector2(currentWidth, 0);
-            newUVs[5] = new Vector2(0, 0);
-            newUVs[8] = new Vector2(currentWidth, currentDepth);
-            newUVs[9] = new Vector2(0, currentDepth);
-
-            //Bottom
-            newUVs[13] = new Vector2(currentWidth, 0);
-            newUVs[14] = new Vector2(0, 0);
-            newUVs[12] = new Vector2(currentWidth, currentDepth);
-            newUVs[15] = new Vector2(0, currentDepth);
+            // Left and right
+            newUVs[16] = newUVs[20] = new Vector2(0, 0);
+            newUVs[17] = newUVs[21] = new Vector2(0, scaledHeight);
+            newUVs[18] = newUVs[22] = new Vector2(scaledDepth, scaledHeight);
+            newUVs[19] = newUVs[23] = new Vector2(scaledDepth, 0);
 
             currentMesh.uv = newUVs;
         }
