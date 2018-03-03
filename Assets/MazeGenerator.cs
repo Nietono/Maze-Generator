@@ -59,7 +59,7 @@ public class MazeGenerator : MonoBehaviour {
     private bool wallMeshesCombined = false;
     #endregion
 
-    private void Awake()
+    void Awake()
     {
         unvisited = this.transform.Find("Unvisited");
         visited = this.transform.Find("Visited");
@@ -68,9 +68,8 @@ public class MazeGenerator : MonoBehaviour {
         pieceWidth = 10;
         wallWidth = 1;
     }
-
-    // Use this for initialization
-    void Start ()
+    
+    void Start()
     {
         InitialiseCameraPosition();
         ResizeAndPositionFloor();
