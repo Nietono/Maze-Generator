@@ -247,8 +247,6 @@ public class MazeGenerator : MonoBehaviour {
 
         transform.GetComponent<MeshFilter>().mesh = new Mesh();
         transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
-        transform.gameObject.SetActive(true);
-
         wallMeshesCombined = true;
         Debug.Log("Meshes combined");
     }
