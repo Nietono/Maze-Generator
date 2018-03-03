@@ -90,6 +90,8 @@ public class MazeGenerator : MonoBehaviour {
 
     private void ResizeAndPositionFloor()
     {
+        floor.parent = null;
+
         floor.localScale = new Vector3(
             mazeX * remainingPieceWidth + 1,
             1,
@@ -99,6 +101,9 @@ public class MazeGenerator : MonoBehaviour {
             -3,
             (mazeY - 1) * -halfRemainingPieceWidth);
         FixUVs(floor);
+        floor.localRotation = Quaternion.identity;
+
+        floor.parent = visited;
     }
 
     private void GenerateMazePieces()
@@ -237,11 +242,12 @@ public class MazeGenerator : MonoBehaviour {
     {
         MeshFilter[] meshFilters = visited.GetComponentsInChildren<MeshFilter>();
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+        Matrix4x4 worldToLocal = transform.worldToLocalMatrix;
 
         for (int i = 0; i < meshFilters.Length; i++)
         {
             combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            combine[i].transform = worldToLocal * meshFilters[i].transform.localToWorldMatrix;
             Destroy(meshFilters[i].gameObject);
         }
 
