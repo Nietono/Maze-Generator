@@ -242,7 +242,10 @@ public class Walls : MonoBehaviour {
 
         if (isNorthOrSouth)
         {
-            newScale = new Vector3((oldScale.x - 1) * wallLength + 1, oldScale.y, oldScale.z);
+            newScale = new Vector3(
+                (oldScale.x - 1) * wallLength + generator.wallWidth,
+                oldScale.y,
+                oldScale.z);
             newPosition = new Vector3(
                 oldPosition.x + generator.halfRemainingPieceWidth * (wallLength - 1),
                 oldPosition.y,
@@ -250,7 +253,9 @@ public class Walls : MonoBehaviour {
         }
         else
         {
-            newScale = new Vector3(oldScale.x, oldScale.y, (oldScale.z - 1) * wallLength + 1);
+            newScale = new Vector3(oldScale.x,
+                oldScale.y,
+                (oldScale.z - 1) * wallLength + generator.wallWidth);
             newPosition = new Vector3(
                 oldPosition.x,
                 oldPosition.y,

@@ -14,6 +14,7 @@ public class MazeGenerator : MonoBehaviour {
 
     #region Piece sizes
     private float _pieceWidth;
+    private float _pieceHeight;
     private float _wallWidth;
     public float remainingPieceWidth = 0;
     public float halfRemainingPieceWidth = 0;
@@ -27,6 +28,12 @@ public class MazeGenerator : MonoBehaviour {
             remainingPieceWidth = value - _wallWidth;
             halfRemainingPieceWidth = remainingPieceWidth * 0.5F;
         }
+    }
+
+    public float pieceHeight
+    {
+        get { return _pieceHeight; }
+        set { _pieceHeight = value; }
     }
 
     public float wallWidth
@@ -66,6 +73,7 @@ public class MazeGenerator : MonoBehaviour {
         floor = visited.Find("Floor");
         piecesBeingLookedAt = new Stack<Transform>();
         pieceWidth = 10;
+        pieceHeight = 5;
         wallWidth = 1;
     }
     
@@ -93,12 +101,12 @@ public class MazeGenerator : MonoBehaviour {
         floor.parent = null;
 
         floor.localScale = new Vector3(
-            mazeX * remainingPieceWidth + 1,
-            1,
-            mazeY * remainingPieceWidth + 1);
+            mazeX * remainingPieceWidth + _wallWidth,
+            _wallWidth,
+            mazeY * remainingPieceWidth + _wallWidth);
         floor.localPosition = new Vector3(
             (mazeX - 1) * halfRemainingPieceWidth,
-            -3,
+            (_pieceHeight + _wallWidth) * -0.5F,
             (mazeY - 1) * -halfRemainingPieceWidth);
         FixUVs(floor);
         floor.localRotation = Quaternion.identity;
