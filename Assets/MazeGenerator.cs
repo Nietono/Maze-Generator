@@ -268,12 +268,12 @@ public class MazeGenerator : MonoBehaviour {
     #endregion
 
     #region Helper functions
-    public static string CreatePieceName(int x, int y)
+    public string CreatePieceName(int x, int y)
     {
         return x + ", " + y;
     }
 
-    public static void FixUVs(Transform inputTransform)
+    public void FixUVs(Transform inputTransform)
     {
         float extraScalingFactor = 0.1F;
         Mesh currentMesh = inputTransform.GetComponent<MeshFilter>().mesh;

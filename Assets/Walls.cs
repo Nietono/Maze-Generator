@@ -44,7 +44,7 @@ public class Walls : MonoBehaviour {
     {
         foreach(Transform child in transform)
         {
-            MazeGenerator.FixUVs(child);
+            generator.FixUVs(child);
         }
     }
 
@@ -264,7 +264,7 @@ public class Walls : MonoBehaviour {
 
         fusedWall.transform.localScale = newScale;
         fusedWall.transform.localPosition = newPosition;
-        MazeGenerator.FixUVs(fusedWall.transform);
+        generator.FixUVs(fusedWall.transform);
     }
     #endregion
 }
