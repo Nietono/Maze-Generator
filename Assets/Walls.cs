@@ -24,7 +24,7 @@ public class Walls : MonoBehaviour {
     public Transform neighbourS;
     public Transform neighbourW;
 
-    private enum WallDirections{North, South, East, West, None};
+    private enum WallDirections { North, South, East, West, None };
     #endregion
 
     public MazeGenerator generator;
@@ -42,7 +42,7 @@ public class Walls : MonoBehaviour {
 
     public void FixChildUVs()
     {
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             generator.FixUVs(child);
         }
@@ -121,6 +121,29 @@ public class Walls : MonoBehaviour {
         {
             Destroy(wallW);
             Destroy(neighbour.GetComponent<Walls>().wallE);
+        }
+    }
+
+    public void ActivateWalls()
+    {
+        if (wallN)
+        {
+            wallN.SetActive(true);
+        }
+
+        if (wallE)
+        {
+            wallE.SetActive(true);
+        }
+
+        if (wallS)
+        {
+            wallS.SetActive(true);
+        }
+
+        if (wallW)
+        {
+            wallW.SetActive(true);
         }
     }
     #endregion

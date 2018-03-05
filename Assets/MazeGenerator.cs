@@ -168,7 +168,7 @@ public class MazeGenerator : MonoBehaviour {
 
             if (currentPiece)
             {
-                currentPiece.parent = visited;
+                AddPieceToVisited(currentPiece);
             }
 
         }
@@ -215,7 +215,7 @@ public class MazeGenerator : MonoBehaviour {
                 Transform newCurrentPiece = unvisitedNeighbours[Random.Range(0, unvisitedNeighbours.Length)];
                 currentPiece.GetComponent<Walls>().JoinToNeighbour(newCurrentPiece);
                 currentPiece = newCurrentPiece;
-                newCurrentPiece.parent = visited;
+                AddPieceToVisited(newCurrentPiece);
             }
             else if (piecesBeingLookedAt.Count > 0)
             {
@@ -227,6 +227,12 @@ public class MazeGenerator : MonoBehaviour {
             pathComplete = true;
             Debug.Log("Path completed");
         }
+    }
+
+    private void AddPieceToVisited(Transform piece)
+    {
+        piece.parent = visited;
+        piece.GetComponent<Walls>().ActivateWalls();
     }
 
     #region Combining
