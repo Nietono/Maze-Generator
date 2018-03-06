@@ -174,32 +174,38 @@ public class MazeGenerator : MonoBehaviour {
         }
     }
 
-    IEnumerator BuildMaze()
+    private IEnumerator BuildMaze()
     {
-        while (!pathComplete)
-        {
-            for (int i = 0; i < genSpeed; i++)
-            {
-                if (pathComplete)
-                {
-                    break;
-                }
-                else
-                {
-                    VisitNextPiece();
-                }
-            }
+        float maxTarget = 1F / 480;
 
-            yield return null;
-        }
-
-        FuseWalls();
+        yield return StartCoroutine(CreatePath(maxTarget));
+        yield return StartCoroutine(FuseWalls(maxTarget));
 
         yield return null;
 
         if (combineMeshes)
         {
-            CombineWallMeshes();
+            yield return StartCoroutine(CombineWallMeshes(maxTarget));
+        }
+    }
+
+    private IEnumerator CreatePath(float maxTarget)
+    {
+        float loopStartTime;
+        float timeTaken;
+
+        while (!pathComplete)
+        {
+            loopStartTime = Time.realtimeSinceStartup;
+            timeTaken = 0;
+
+            while (!pathComplete && timeTaken < maxTarget)
+            {
+                VisitNextPiece();
+                timeTaken = Time.realtimeSinceStartup - loopStartTime;
+            }
+
+            yield return null;
         }
     }
 
@@ -236,8 +242,11 @@ public class MazeGenerator : MonoBehaviour {
     }
 
     #region Combining
-    private void FuseWalls()
+    private IEnumerator FuseWalls(float maxTarget)
     {
+        float loopStartTime = Time.realtimeSinceStartup;
+        float timeTaken;
+
         for (int i = 0; i < mazeX; i++)
         {
             for (int j = 0; j < mazeY; j++)
@@ -245,6 +254,14 @@ public class MazeGenerator : MonoBehaviour {
                 Walls currentWallPiece = piecesArray[i][j].GetComponent<Walls>();
                 currentWallPiece.FuseAllWallsInLine();
                 Destroy(currentWallPiece.gameObject);
+                timeTaken = Time.realtimeSinceStartup - loopStartTime;
+
+                if (timeTaken > maxTarget)
+                {
+                    yield return null;
+
+                    loopStartTime = Time.realtimeSinceStartup;
+                }
             }
         }
 
@@ -252,23 +269,62 @@ public class MazeGenerator : MonoBehaviour {
         Debug.Log("Walls fused");
     }
 
-    private void CombineWallMeshes()
+    private IEnumerator CombineWallMeshes(float maxTarget)
     {
+        float loopStartTime = Time.realtimeSinceStartup;
+        float timeTaken;
+
         MeshFilter[] meshFilters = visited.GetComponentsInChildren<MeshFilter>();
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
         Matrix4x4 worldToLocal = transform.worldToLocalMatrix;
+        GameObject[] toBeDestroyed = new GameObject[meshFilters.Length];
+        GameObject meshGameObject;
 
         for (int i = 0; i < meshFilters.Length; i++)
         {
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = worldToLocal * meshFilters[i].transform.localToWorldMatrix;
-            Destroy(meshFilters[i].gameObject);
+            meshGameObject = meshFilters[i].gameObject;
+            toBeDestroyed[i] = meshGameObject;
+            timeTaken = Time.realtimeSinceStartup - loopStartTime;
+
+            if (timeTaken > maxTarget)
+            {
+                yield return null;
+
+                loopStartTime = Time.realtimeSinceStartup;
+            }
         }
 
         transform.GetComponent<MeshFilter>().mesh = new Mesh();
         transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        visited.gameObject.SetActive(false);
         wallMeshesCombined = true;
         Debug.Log("Meshes combined");
+
+        yield return StartCoroutine(DestroyWalls(maxTarget, toBeDestroyed));
+    }
+
+    private IEnumerator DestroyWalls(float maxTarget, GameObject[] toBeDestroyed)
+    {
+        float loopStartTime = Time.realtimeSinceStartup;
+        float timeTaken;
+
+        for(int i =0; i < toBeDestroyed.Length; i++)
+        {
+            Destroy(toBeDestroyed[i]);
+
+            timeTaken = Time.realtimeSinceStartup - loopStartTime;
+
+            if (timeTaken > maxTarget)
+            {
+                yield return null;
+
+                loopStartTime = Time.realtimeSinceStartup;
+            }
+        }
+
+        Debug.Log("Walls destroyed");
     }
     #endregion
     #endregion
